@@ -78,15 +78,15 @@ module _ where private
 
   -- hangs with type signature, fast without
   -- g64≡↑[g63]33' : g 64 ≡ ↑[ g 63 ] 3 3
-  -- g64≡↑[g63]33' = gsucn≡↑[gn]33 64
+  g64≡↑[g63]33' = gsucn≡↑[gn]33 63
 
   -- fast
-  g64≡↑[g63]33'' : Function.Base.typeOf (gsucn≡↑[gn]33 64)
-  g64≡↑[g63]33'' = gsucn≡↑[gn]33 64
+  g64≡↑[g63]33'' : Function.Base.typeOf (gsucn≡↑[gn]33 63)
+  g64≡↑[g63]33'' = gsucn≡↑[gn]33 63
 
   -- fast
-  g64≡↑[g63]33''' : (λ n → g (suc n) ≡ ↑[ g n ] 3 3) 64
-  g64≡↑[g63]33''' = gsucn≡↑[gn]33 64
+  g64≡↑[g63]33''' : (λ n → g (suc n) ≡ ↑[ g n ] 3 3) 63
+  g64≡↑[g63]33''' = gsucn≡↑[gn]33 63
 
 identity : {ℓ : _} → {A : Set ℓ} → A → A
 identity a = a
