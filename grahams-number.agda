@@ -5,6 +5,7 @@ open import Data.Nat
 import Data.Nat.Properties
 open import Relation.Binary.PropositionalEquality
 open import Data.Product
+import Function.Base
 
 
 -- Definition of Graham's number, following Wikipedia:
@@ -52,43 +53,64 @@ module _ where private
   -- G%10≡7 : G % 10 ≡ 7
   -- G%10≡7 = g64%10≡7
 
+module _ where private
   -- This hangs!
   -- G≡g64 : G ≡ g 64
   -- G≡g64 = refl
+
+  -- hangs
+  -- g64≡↑[g63]33 : g 64 ≡ ↑[ g 63 ] 3 3
+  -- g64≡↑[g63]33 = refl
+
+  -- fast
+  gsucn≡↑[gn]33 : (n : ℕ) → g (suc n) ≡ ↑[ g n ] 3 3
+  gsucn≡↑[gn]33 n = refl
+
+  -- hangs with type signature, fast without
+  -- g64≡↑[g63]33' : g 64 ≡ ↑[ g 63 ] 3 3
+  -- g64≡↑[g63]33' = gsucn≡↑[gn]33 64
+
+  -- fast
+  g64≡↑[g63]33'' : Function.Base.typeOf (gsucn≡↑[gn]33 64)
+  g64≡↑[g63]33'' = gsucn≡↑[gn]33 64
+
+  -- fast
+  g64≡↑[g63]33''' : (λ n → g (suc n) ≡ ↑[ g n ] 3 3) 64
+  g64≡↑[g63]33''' = gsucn≡↑[gn]33 64
 
 identity : {ℓ : _} → {A : Set ℓ} → A → A
 identity a = a
 
 
 -- Do the following things typecheck (fast)?
+module _ where private
+  -- fast
+  _ : G ≡ G
+  _ = refl
 
--- fast
-_ : G ≡ G
-_ = refl
+  -- hangs
+  -- _ : identity G ≡ G
+  -- _ = refl
 
--- hangs
--- _ : identity G ≡ G
--- _ = refl
+  -- hangs
+  -- _ : 0 + G ≡ G
+  -- _ = refl
 
--- hangs
--- _ : 0 + G ≡ G
--- _ = refl
+  -- hangs
+  -- _ : G + 0 ≡ G
+  -- _ = refl
 
--- hangs
--- _ : G + 0 ≡ G
--- _ = refl
+  -- fast
+  _ : Set
+  _ = G % 10 ≡ 7
 
--- fast
-_ : Set
-_ = G % 10 ≡ 7
+  -- hangs
+  -- _ : G % 10 ≡ 7
+  -- _ = refl
 
--- hangs
--- _ : G % 10 ≡ 7
--- _ = refl
-
--- hangs
--- _ : G % 10 ≡ 0
--- _ = refl
+  -- hangs
+  -- _ : G % 10 ≡ 0
+  -- _ = refl
 
 
 -- Proof attempt that G % 10 ≡ 7.
@@ -137,10 +159,10 @@ three-levels-finder-2 .2 n (s≤s (s≤s {n = zero} (z≤n {n = .zero}))) q =
 three-levels-finder-2 .(suc (suc (suc m))) .(suc _) (s≤s (s≤s {n = suc m} z≤n)) (s≤s {n = n} q) = three-levels-finder-2 (2 + m) (↑[ 3 + m ] 3 n) (s≤s (s≤s z≤n)) (estimates.↑[]≥3 (3 + m) n (≤-trans (s≤s z≤n) q))
   where open Data.Nat.Properties
 
-G-has-three-levels : has-three-levels G
-G-has-three-levels = {!three-levels-finder-2 !} -- Problem!
+G-has-three-levels : has-three-levels (g 64)
+G-has-three-levels = {!three-levels-finder-2 (g 63) !}  -- Problem. Can't even do C-c C-d or C-c C-.
 
-G%10≡7 : G % 10 ≡ 7
+G%10≡7 : g 64 % 10 ≡ 7
 G%10≡7 = subst P G'-vs-G (three-levels G')
   where
     P : ℕ → Set
