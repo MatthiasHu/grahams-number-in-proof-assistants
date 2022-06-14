@@ -41,6 +41,16 @@ g : ℕ → ℕ
 g zero = 4
 g (suc n) = ↑[ g n ] 3 3
 
+module _ where private
+  abstract
+    g' : ℕ → ℕ
+    g' zero = 4
+    g' (suc n) = ↑[ g' n ] 3 3
+
+    g≡g' : (n : ℕ) → g n ≡ g' n
+    g≡g' zero = refl
+    g≡g' (suc n) = cong (λ k → ↑[ k ] 3 3) (g≡g' n)
+
 -- Graham's number
 G : ℕ
 G = g 64
