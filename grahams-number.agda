@@ -2,7 +2,9 @@
 module grahams-number where
 
 open import Data.Nat
+import Data.Nat.Properties
 open import Relation.Binary.PropositionalEquality
+open import Data.Product
 
 
 -- Definition of Graham's number, following Wikipedia:
@@ -38,10 +40,21 @@ g : ℕ → ℕ
 g zero = 4
 g (suc n) = ↑[ g n ] 3 3
 
-grahams-number : ℕ
-grahams-number = g 64
+-- Graham's number
+G : ℕ
+G = g 64
 
-G = grahams-number
+module _ where private
+  g64%10≡7 : g 64 % 10 ≡ 7
+  g64%10≡7 = {!!}
+
+  -- This hangs!
+  -- G%10≡7 : G % 10 ≡ 7
+  -- G%10≡7 = g64%10≡7
+
+  -- This hangs!
+  -- G≡g64 : G ≡ g 64
+  -- G≡g64 = refl
 
 identity : {ℓ : _} → {A : Set ℓ} → A → A
 identity a = a
@@ -80,8 +93,9 @@ _ = G % 10 ≡ 7
 
 -- Proof attempt that G % 10 ≡ 7.
 
-_↑_ : ℕ → ℕ → ℕ
+_↑_ _↑↑_ : ℕ → ℕ → ℕ
 _↑_ = ↑[ 1 ]
+_↑↑_ = ↑[ 2 ]
 
 level-1 : (n : ℕ) → 3 ↑ n % 2 ≡ 1
 level-1 = {!!}
@@ -95,14 +109,42 @@ level-3 = {!!}
 three-levels : (n : ℕ) → 3 ↑ (3 ↑ (3 ↑ n)) % 10 ≡ 7
 three-levels n = level-3 (3 ↑ (3 ↑ n)) (level-2 (3 ↑ n) (level-1 n))
 
-G' : ℕ
-G' = {!!}
+has-three-levels : ℕ → Set
+has-three-levels N = Σ[ N' ∈ ℕ ] ((3 ↑ (3 ↑ (3 ↑ N'))) ≡ N)
 
-G-vs-G' : G ≡ 3 ↑ (3 ↑ (3 ↑ G'))
-G-vs-G' = {!!}
+three-levels-finder-1 : (n : ℕ) → n ≥ 3 → has-three-levels (↑[ 2 ] 3 n)
+three-levels-finder-1 .(suc (suc (suc _))) (s≤s (s≤s (s≤s (z≤n {n = n})))) =  3 ↑↑ n , refl
+
+module estimates where
+  open Data.Nat.Properties
+
+  ↑≥1 : (n : ℕ) → 3 ↑ n ≥ 1
+  ↑≥1 zero = s≤s z≤n
+  ↑≥1 (suc n) = ≤-trans (s≤s z≤n) (*-monoʳ-≤ 3 (↑≥1 n))
+
+  ↑[]≥1 : (m n : ℕ) → m ≥ 1 → (↑[ m ] 3 n) ≥ 1
+  ↑[]≥1 .(suc _) zero (s≤s p) = s≤s z≤n
+  ↑[]≥1 .1 (suc n) (s≤s {n = zero} (z≤n {n = .zero})) = ≤-trans (↑≥1 n) (m≤m+n (3 ↑ n) _)
+  ↑[]≥1 .(suc (suc m)) (suc n) (s≤s {n = suc m} (z≤n {n = .(suc m)})) = ↑[]≥1 (1 + m) (↑[ 2 + m ] 3 n) (s≤s z≤n)
+
+  ↑[]≥3 : (m n : ℕ) → n ≥ 1 → (↑[ m ] 3 n) ≥ 3
+  ↑[]≥3 zero n p = *-monoʳ-≤  3 p
+  ↑[]≥3 (suc m) .(suc _) (s≤s (z≤n {n = n})) = ↑[]≥3 m _ ( (↑[]≥1 (1 + m) n (s≤s z≤n)) )
+
+three-levels-finder-2 : (m n : ℕ) → m ≥ 2 → n ≥ 3 → has-three-levels (↑[ m ] 3 n)
+three-levels-finder-2 .2 n (s≤s (s≤s {n = zero} (z≤n {n = .zero}))) q =
+  three-levels-finder-1 n q
+three-levels-finder-2 .(suc (suc (suc m))) .(suc _) (s≤s (s≤s {n = suc m} z≤n)) (s≤s {n = n} q) = three-levels-finder-2 (2 + m) (↑[ 3 + m ] 3 n) (s≤s (s≤s z≤n)) (estimates.↑[]≥3 (3 + m) n (≤-trans (s≤s z≤n) q))
+  where open Data.Nat.Properties
+
+G-has-three-levels : has-three-levels G
+G-has-three-levels = {!three-levels-finder-2 !} -- Problem!
 
 G%10≡7 : G % 10 ≡ 7
-G%10≡7 = subst P (sym G-vs-G') (three-levels G')
+G%10≡7 = subst P G'-vs-G (three-levels G')
   where
     P : ℕ → Set
     P n = n % 10 ≡ 7
+
+    G' = proj₁ G-has-three-levels
+    G'-vs-G = proj₂ G-has-three-levels
