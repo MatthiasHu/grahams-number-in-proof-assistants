@@ -66,7 +66,7 @@ abstract
   g-computation-rule (suc n) = refl
 
 
--- Proof attempt that G % 10 ≡ 7.
+-- Proof that G % 10 ≡ 7.
 
 _↑_ _↑↑_ : ℕ → ℕ → ℕ
 _↑_ = ↑[ 1 ]
