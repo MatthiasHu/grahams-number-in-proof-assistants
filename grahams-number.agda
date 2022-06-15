@@ -148,9 +148,11 @@ three-levels-finder-2 .(suc (suc (suc m))) .(suc _) (s≤s (s≤s {n = suc m} z�
   three-levels-finder-2 (2 + m) (↑[ 3 + m ] 3 n) (s≤s (s≤s z≤n)) (estimates.↑[]≥3 (3 + m) n (≤-trans (s≤s z≤n) q))
   where open Data.Nat.Properties
 
-G-has-three-levels : has-three-levels (g 64)
+G-has-three-levels : has-three-levels G
 G-has-three-levels =
-  subst has-three-levels (sym (g-computation-rule 64))
+  subst
+    has-three-levels
+    (sym (g-computation-rule 64))
     (three-levels-finder-2 (g 63) 3 (g≥2 63) ≤-refl)
   where
     open Data.Nat.Properties
