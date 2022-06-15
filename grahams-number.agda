@@ -3,6 +3,7 @@ module grahams-number where
 
 open import Data.Nat
 import Data.Nat.Properties
+import Data.Nat.DivMod
 open import Relation.Binary.PropositionalEquality
 open import Data.Product
 import Function.Base
@@ -72,14 +73,40 @@ _↑_ = ↑[ 1 ]
 _↑↑_ = ↑[ 2 ]
 
 module three-levels where
+  open ≡-Reasoning
+  open Data.Nat.Properties
+  open Data.Nat.DivMod
+
   level-1 : (n : ℕ) → 3 ↑ n % 2 ≡ 1
-  level-1 = {!!}
+  level-1 zero = refl
+  level-1 (suc n) = begin
+    3 * (3 ↑ n)        % 2  ≡⟨ %-distribˡ-* 3 (3 ↑ n) 2 ⟩
+    1 * ((3 ↑ n) % 2)  % 2  ≡⟨ cong (_% 2) (*-identityˡ ((3 ↑ n) % 2)) ⟩
+    (3 ↑ n) % 2        % 2  ≡⟨ m%n%n≡m%n (3 ↑ n) 2 ⟩
+    3 ↑ n   % 2             ≡⟨ level-1 n ⟩
+    1                       ∎
 
   level-2 : (n : ℕ) → n % 2 ≡ 1 → 3 ↑ n % 4 ≡ 3
-  level-2 = {!!}
+  level-2 (suc zero) p = refl
+  level-2 (suc (suc n)) p = begin
+    3 * (3 * (3 ↑ n))  % 4  ≡˘⟨ cong (_% 4) (*-assoc 3 3 (3 ↑ n)) ⟩
+    9 * (3 ↑ n)        % 4  ≡⟨ %-distribˡ-* 9 (3 ↑ n) 4 ⟩
+    1 * ((3 ↑ n) % 4)  % 4  ≡⟨ cong (_% 4) (*-identityˡ ((3 ↑ n) % 4)) ⟩
+    ((3 ↑ n) % 4)      % 4  ≡⟨ m%n%n≡m%n (3 ↑ n) 4 ⟩
+    (3 ↑ n) % 4             ≡⟨ level-2 n p ⟩
+    3                       ∎
 
   level-3 : (n : ℕ) → n % 4 ≡ 3 → 3 ↑ n % 10 ≡ 7
-  level-3 = {!!}
+  level-3 (suc (suc (suc zero))) p = refl
+  level-3 (suc (suc (suc (suc n)))) p = begin
+    3  * (3 ↑ (3 + n))  % 10  ≡˘⟨ cong (_% 10) (*-assoc 3 3 (3 ↑ (2 + n))) ⟩
+    9  * (3 ↑ (2 + n))  % 10  ≡˘⟨ cong (_% 10) (*-assoc 9 3 (3 ↑ (1 + n))) ⟩
+    27 * (3 ↑ (1 + n))  % 10  ≡˘⟨ cong (_% 10) (*-assoc 27 3 (3 ↑ n)) ⟩
+    81 * (3 ↑ n)        % 10  ≡⟨ %-distribˡ-* 81 (3 ↑ n) 10 ⟩
+    1 * ((3 ↑ n) % 10)  % 10  ≡⟨ cong (_% 10) (*-identityˡ ((3 ↑ n) % 10)) ⟩
+    ((3 ↑ n) % 10)      % 10  ≡⟨ m%n%n≡m%n (3 ↑ n) 10 ⟩
+    (3 ↑ n) % 10              ≡⟨ level-3 n p ⟩
+    7                         ∎
 
   %10≡7 : (n : ℕ) → 3 ↑ (3 ↑ (3 ↑ n)) % 10 ≡ 7
   %10≡7 n = level-3 (3 ↑ (3 ↑ n)) (level-2 (3 ↑ n) (level-1 n))
