@@ -115,15 +115,8 @@ has-three-levels : ℕ → Set
 has-three-levels N = Σ[ N' ∈ ℕ ] ((3 ↑ (3 ↑ (3 ↑ N'))) ≡ N)
 
 %10≡7-from-has-three-levels : (n : ℕ) → has-three-levels n → n % 10 ≡ 7
-%10≡7-from-has-three-levels n n-has-three-levels =
-  subst P 3↑3↑3↑n'≡n (three-levels.%10≡7 n')
-  where
-    P : ℕ → Set
-    P n = n % 10 ≡ 7
-
-    n' = proj₁ n-has-three-levels
-    3↑3↑3↑n'≡n = proj₂ n-has-three-levels
-
+%10≡7-from-has-three-levels n (n' , 3↑3↑3↑n'≡n) =
+  subst (λ k → k % 10 ≡ 7) 3↑3↑3↑n'≡n (three-levels.%10≡7 n')
 
 three-levels-finder-1 : (n : ℕ) → n ≥ 3 → has-three-levels (↑[ 2 ] 3 n)
 three-levels-finder-1 .(suc (suc (suc _))) (s≤s (s≤s (s≤s (z≤n {n = n})))) =  3 ↑↑ n , refl
