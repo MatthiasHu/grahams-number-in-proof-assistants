@@ -47,9 +47,22 @@ module _ where private
     g' zero = 4
     g' (suc n) = ↑[ g' n ] 3 3
 
-    g≡g' : (n : ℕ) → g n ≡ g' n
-    g≡g' zero = refl
-    g≡g' (suc n) = cong (λ k → ↑[ k ] 3 3) (g≡g' n)
+    g'-computation-rule-zero : g' zero ≡ 4
+    g'-computation-rule-zero = refl
+
+    g'-computation-rule-suc : (n : ℕ) → g' (suc n) ≡ ↑[ g' n ] 3 3
+    g'-computation-rule-suc n = refl
+
+  g'≡g : (n : ℕ) → g' n ≡ g n
+  g'≡g zero = g'-computation-rule-zero
+  g'≡g (suc n) =
+    trans
+      (g'-computation-rule-suc n)
+      (cong (λ k → ↑[ k ] 3 3) (g'≡g n))
+
+  -- Yay!
+  g'-computation-rule-64 : g' 64 ≡ ↑[ g' 63 ] 3 3
+  g'-computation-rule-64 = g'-computation-rule-suc 63
 
 -- Graham's number
 G : ℕ
