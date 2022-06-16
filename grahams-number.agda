@@ -1,3 +1,4 @@
+{-# OPTIONS --safe --without-K #-}
 
 module grahams-number where
 
