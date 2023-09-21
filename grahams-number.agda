@@ -10,6 +10,7 @@ open import Data.Product
 import Function.Base
 
 
+------------------------------------------------------------
 -- Definition of Graham's number, following Wikipedia:
 -- https://en.wikipedia.org/wiki/Graham%27s_number
 
@@ -67,6 +68,7 @@ abstract
   g-computation-rule (suc n) = refl
 
 
+------------------------------------------------------------
 -- Warm-up: proof that G > 0.
 
 module _
@@ -92,6 +94,7 @@ G>0 : G > 0
 G>0 = g>0 64
 
 
+------------------------------------------------------------
 -- Proof that G % 10 ≡ 7.
 
 _↑_ _↑↑_ : ℕ → ℕ → ℕ
