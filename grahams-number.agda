@@ -67,6 +67,31 @@ abstract
   g-computation-rule (suc n) = refl
 
 
+-- Warm-up: proof that G > 0.
+
+module _
+  (f : ℕ → ℕ → ℕ)
+  (f>0 : (a b : ℕ) → (a > 0) → (b > 0) → f a b > 0)
+  where
+
+  iterate>0 : (a b : ℕ) → (a > 0) → iterate f a b > 0
+  iterate>0 a zero a>0 = s≤s z≤n
+  iterate>0 a (suc b) a>0 = f>0 a (iterate f a b) a>0 (iterate>0 a b a>0)
+
+↑[]>0 : (n a b : ℕ) → (a > 0) → (b > 0) → ↑[ n ] a b > 0
+↑[]>0 zero a b = *-mono-≤
+  where
+  open Data.Nat.Properties
+↑[]>0 (suc n) a b a>0 b>0 = iterate>0 ↑[ n ] (↑[]>0 n) a b a>0
+
+g>0 : (n : ℕ) → g n > 0
+g>0 zero = subst (_> 0) (sym (g-computation-rule zero)) (s≤s z≤n)
+g>0 (suc n) = subst (_> 0) (sym (g-computation-rule (suc n))) (↑[]>0 (g n) 3 3 (s≤s z≤n) (s≤s z≤n))
+
+G>0 : G > 0
+G>0 = g>0 64
+
+
 -- Proof that G % 10 ≡ 7.
 
 _↑_ _↑↑_ : ℕ → ℕ → ℕ
