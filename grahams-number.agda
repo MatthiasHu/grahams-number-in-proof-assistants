@@ -2,6 +2,7 @@
 
 module grahams-number where
 
+-- We are using the Agda standard library.
 open import Data.Nat
 import Data.Nat.Properties
 import Data.Nat.DivMod
@@ -40,11 +41,13 @@ iterate f a (suc b) = f a (iterate f a b)
 _ : ↑[ 2 ] 2 4 ≡ 65536
 _ = refl
 
--- We don't want g to compute, so define it abstract.
+-- We don't want g to compute, so define it 'abstract'.
+-- See: https://agda.readthedocs.io/en/latest/language/abstract-definitions.html
 abstract
   g : ℕ → ℕ
   g zero = 4
   g (suc n) = ↑[ g n ] 3 3
+  -- Note: What is called 'g(n)' on Wikipedia is called 'g (n+1)' here.
 
 -- Graham's number
 G : ℕ
