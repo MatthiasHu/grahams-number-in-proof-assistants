@@ -5,6 +5,8 @@
 - Prove `G > 0`.
 - Prove that the last (least significant) digit of `G` is a 7: `G % 10 == 7`.
 
+Let us collect solutions in this repository!
+
 
 ## Solutions
 
