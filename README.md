@@ -8,5 +8,5 @@
 
 ## Solutions
 
-- [solution in Agda (using the standard library)](solutions/agda-with-stdlib/grahams-number.agda)
+- [a solution in Agda (using the standard library)](solutions/agda-with-stdlib/grahams-number.agda)
 
