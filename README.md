@@ -11,4 +11,5 @@ Let us collect solutions in this repository!
 ## Solutions
 
 - [a solution in Agda (using the standard library)](solutions/agda-with-stdlib/grahams-number.agda)
+- [a solution in Lean 4 (using mathlib)](solutions/lean-with-mathlib/LeanWithMathlib.lean)
 
