@@ -14,3 +14,5 @@ Let us collect solutions in this repository!
 - [a solution in Lean 4 (using mathlib)](solutions/lean-with-mathlib/LeanWithMathlib.lean)
 - [a partial solution in Coq](solutions/Coq/grahams-number.v)
 
+We are in particular waiting for solutions in Isabelle/HOL and HOL Light! ;-)
+
